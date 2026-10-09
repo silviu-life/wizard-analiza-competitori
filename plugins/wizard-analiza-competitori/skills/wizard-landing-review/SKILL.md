@@ -1,6 +1,6 @@
 ---
 name: wizard-landing-review
-description: Vizitează cu browserul paginile de landing ale reclamelor potrivite dintr-un dosar wizard-ads-review din runs/, transformă fiecare pagină în JSON structurat (primul ecran, secțiuni, butoane, formulare, prețuri, contacte), o judecă cu Jev (tip de pagină, acțiune cerută, preț, garanție, recenzii, urgență, date de firmă, potrivirea cu reclama) și produce runs/<slug>/landings.html cu filtre. Se activează la /wizard-landing-review, „analizează landing-urile din nișa X”, „unde duc reclamele concurenței”, „ce pagini de landing folosesc competitorii”.
+description: Vizitează cu browserul paginile de landing ale reclamelor potrivite dintr-un dosar wizard-ads-review din runs/, transformă fiecare pagină în JSON structurat (primul ecran, secțiuni, butoane, formulare, prețuri, contacte), o judecă cu Jev (tip de pagină, acțiune cerută, preț, garanție, recenzii, urgență, date de firmă, potrivirea cu reclama) și le adaugă în tabul Landing-uri din runs/<slug>/raport.html. Se activează la /wizard-landing-review, „analizează landing-urile din nișa X”, „unde duc reclamele concurenței”, „ce pagini de landing folosesc competitorii”.
 argument-hint: <slug> | reanalyze <slug> | list
 ---
 
@@ -40,7 +40,7 @@ Fiecare pagină devine un JSON pe care Jev îl citește ușor: `hero` (primul ec
    ```
    Judecățile se păstrează între rulări; o pagină se judecă din nou doar dacă s-a schimbat conținutul ei, întrebările sau brief-ul. Dacă `.env` nu există, scoate `--env-file .env`.
 
-5. **Raport în chat**, din `runs/<slug>/landings.json` (`pages`) și `landings-data.js` (`SUMMARY`):
+5. **Raport în chat**, din `runs/<slug>/landings.json` (`pages`) (`pages`, `summary`):
    - câte reclame potrivite, câte destinații și cum se împart (`summary.destinations`): pagini web, WhatsApp, apel etc. Câte pagini au fost citite, câte au eșuat (`error`) și câte sunt aproape goale (`thin`);
    - tiparele din `summary.dims`: tipul de pagină dominant, acțiunea cerută, cum e arătat prețul, ce elemente apar des (garanție, recenzii, urgență, plata la livrare, date de firmă) și câte au formular;
    - paginile la care duc cele mai multe reclame și cele ale reclamelor care rulează de cel mai mult timp (`max_days`): domeniul, tipul, prețul, ce promite primul ecran și cât de bine continuă reclama (`j.ad_match`);
@@ -48,7 +48,7 @@ Fiecare pagină devine un JSON pe care Jev îl citește ușor: `hero` (primul ec
    - 3 idei concrete pentru landing-ul userului;
    - judecățile din lista `unsure` sunt incerte: nu le prezenta ca fapte. Sunt tipare descriptive, nu dovezi că o pagină convertește.
 
-6. **Predă pagina.** Dă calea `runs/<slug>/landings.html`. Pe WSL: `explorer.exe "$(wslpath -w runs/<slug>/landings.html)"`.
+6. **Predă raportul.** Dă calea `runs/<slug>/raport.html`, tabul Landing-uri. Pe WSL: `explorer.exe "$(wslpath -w runs/<slug>/raport.html)"`.
 
 ## Limite
 
@@ -60,7 +60,7 @@ Fiecare pagină devine un JSON pe care Jev îl citește ușor: `hero` (primul ec
 
 ## Fișierele adăugate în dosar
 
-`landings.html` (pagina cu filtre), `landings-data.js` (datele pentru pagină), `landings.json` (indexul destinațiilor, cu judecățile), `landings/<id>.json` (fiecare pagină, structurată).
+`landings.json` (indexul destinațiilor, cu judecățile, `meta` și `summary`), `landings/<id>.json` (fiecare pagină, structurată). `raport.html` și `report-data.js` sunt refăcute cu ambele taburi.
 
 ## Verificări rapide, fără rețea
 

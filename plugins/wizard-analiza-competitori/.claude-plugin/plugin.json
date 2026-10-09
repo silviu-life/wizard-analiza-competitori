@@ -1,6 +1,6 @@
 {
   "name": "wizard-analiza-competitori",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Analiza competitorilor din Meta Ad Library: reclamele active ale unei nișe, judecate cu Jev sau Claude Code, reach-ul din UE și paginile de landing, într-un dosar local cu filtre.",
   "author": {"name": "Silviu", "url": "https://github.com/silviu-life"},
   "repository": "https://github.com/silviu-life/wizard-analiza-competitori"

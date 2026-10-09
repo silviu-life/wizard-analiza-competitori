@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+html{--bg:#0f1113;--ink:#ebe7df;--acc:#d4b27a;--mut:#8f8a80;--rule:#2a2d31;--trk:#1e2124;--hov:#171a1d;--hdr:rgba(15,17,19,.88);--ov:rgba(0,0,0,.6);--ph:#6a665f;color-scheme:dark}
+html[data-theme="light"]{--bg:#f5f3ee;--ink:#16181b;--acc:#8a6a2f;--mut:#66625a;--rule:#dcd7cc;--trk:#e7e2d8;--hov:#ece8df;--hdr:rgba(245,243,238,.9);--ov:rgba(22,24,27,.45);--ph:#9a958b;color-scheme:light}
+body{transition:background-color .4s,color .4s}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hanken Grotesk",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:none}a:hover{color:var(--acc)}
+input::placeholder{color:var(--ph)}
+</style>
+<script src="report-data.js"></script>
+<script src="report-logic.js"></script>
+</helmet>
+
+<header style="position:sticky;top:0;z-index:20;background:var(--hdr);backdrop-filter:blur(10px);border-bottom:1px solid var(--ink)">
+  <div style="max-width:1360px;margin:0 auto;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+    <div style="display:flex;align-items:baseline;gap:16px">
+      <span style="font-family:'Hanken Grotesk',sans-serif;font-size:26px;line-height:1">Analiză competitivă</span>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)">Publicitate · {{ country }}</span>
+    </div>
+    <nav style="display:flex;gap:4px;align-items:center">
+      <sc-if value="{{ isAds }}" hint-placeholder-val="{{ true }}">
+        <button style="font:500 13px 'Hanken Grotesk';padding:8px 16px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:2px;cursor:pointer">Reclame</button>
+        <button onClick="{{ goLand }}" style="font:500 13px 'Hanken Grotesk';padding:8px 16px;border:1px solid transparent;background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">Landing-uri</button>
+      </sc-if>
+      <sc-if value="{{ isLand }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ goAds }}" style="font:500 13px 'Hanken Grotesk';padding:8px 16px;border:1px solid transparent;background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">Reclame</button>
+        <button style="font:500 13px 'Hanken Grotesk';padding:8px 16px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:2px;cursor:pointer">Landing-uri</button>
+      </sc-if>
+    <button onClick="{{ toggleTheme }}" aria-label="Schimbă tema" style="margin-left:14px;display:flex;align-items:center;gap:8px;font:500 12px 'Hanken Grotesk';padding:6px 6px 6px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:999px;cursor:pointer"><span>{{ themeLabel }}</span><span style="width:34px;height:18px;border-radius:999px;background:var(--trk);position:relative;display:block"><span style="position:absolute;top:2px;left:{{ knobLeft }};width:14px;height:14px;border-radius:50%;background:var(--acc);transition:left .3s"></span></span></button>
+    </nav>
+  </div>
+</header>
+
+<sc-if value="{{ isAds }}" hint-placeholder-val="{{ true }}">
+<main style="max-width:1360px;margin:0 auto;padding:0 40px">
+
+  <section style="padding:88px 0 56px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:64px;border-bottom:1px solid var(--ink);align-items:end">
+    <div data-reveal="">
+      <div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:28px">Dosar competitiv · {{ collected }}</div>
+      <h1 style="font-family:'Hanken Grotesk',sans-serif;font-weight:200;font-size:clamp(52px,7.4vw,120px);line-height:.95;letter-spacing:-.045em;margin:0;text-wrap:balance">Cum își vând concurenții <em style="color:var(--acc);font-style:normal;font-weight:400">{{ niche }}</em></h1>
+    </div>
+    <div data-reveal="" style="display:flex;flex-direction:column;gap:20px;padding-bottom:12px">
+      <p style="font-size:17px;line-height:1.55;margin:0;text-wrap:pretty">Analiza a {{ nCollected }} reclame active în Meta Ad Library și a paginilor spre care trimit. Produs analizat: {{ product }}</p>
+      <dl style="margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 20px;font-size:13px;border-top:1px solid var(--rule);padding-top:16px">
+        <dt style="color:var(--mut)">Public</dt><dd style="margin:0">{{ audienceBrief }}</dd>
+        <dt style="color:var(--mut)">Problemă</dt><dd style="margin:0">{{ problem }}</dd>
+      </dl>
+    </div>
+  </section>
+
+  <nav style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-bottom:1px solid var(--ink)">
+    <a href="#s1" style="padding:18px 0;display:flex;gap:12px;align-items:baseline;border-right:1px solid var(--rule)"><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--acc)">01</span><span style="font-size:14px">Sumar executiv</span></a>
+    <a href="#s2" style="padding:18px 16px;display:flex;gap:12px;align-items:baseline;border-right:1px solid var(--rule)"><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--acc)">02</span><span style="font-size:14px">Audiență</span></a>
+    <a href="#s3" style="padding:18px 16px;display:flex;gap:12px;align-items:baseline;border-right:1px solid var(--rule)"><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--acc)">03</span><span style="font-size:14px">Mesaje</span></a>
+    <a href="#s4" style="padding:18px 16px;display:flex;gap:12px;align-items:baseline;border-right:1px solid var(--rule)"><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--acc)">04</span><span style="font-size:14px">Top 10 jucători</span></a>
+    <a href="#s5" style="padding:18px 16px;display:flex;gap:12px;align-items:baseline"><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--acc)">05</span><span style="font-size:14px">Toate reclamele</span></a>
+  </nav>
+
+  <section id="s1" style="padding:96px 0 80px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:48px;border-bottom:1px solid var(--rule)">
+    <div data-reveal=""><div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--acc)">§ 01</div><h2 style="font-family:'Hanken Grotesk',sans-serif;font-weight:300;letter-spacing:-.03em;font-size:48px;line-height:1;margin:12px 0 0">Sumar executiv</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+        <div data-reveal="" style="padding:0 24px 0 0;margin-right:24px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:200;font-size:80px;line-height:.9;letter-spacing:-.04em;color:var(--acc);letter-spacing:-.02em">{{ k.v }}</div>
+          <div style="font-size:14px;font-weight:600">{{ k.k }}</div>
+          <div style="font-size:13px;line-height:1.45;color:var(--mut);text-wrap:pretty">{{ k.note }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="s2" style="padding:96px 0 80px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:48px;border-bottom:1px solid var(--rule)">
+    <div data-reveal=""><div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--acc)">§ 02</div><h2 style="font-family:'Hanken Grotesk',sans-serif;font-weight:300;letter-spacing:-.03em;font-size:48px;line-height:1;margin:12px 0 16px">Audiență</h2><p style="font-size:14px;line-height:1.55;color:var(--mut);margin:0">Distribuția reach-ului raportat de Meta, pe gen și grupă de vârstă.</p></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:56px">
+      <div data-reveal="">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:20px">Gen</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Hanken Grotesk',sans-serif;font-size:64px;line-height:1">{{ malePct }}</span><span style="font-family:'Hanken Grotesk',sans-serif;font-size:64px;line-height:1;color:var(--acc)">{{ femalePct }}</span></div>
+        <div style="display:flex;height:10px;margin:14px 0 10px"><div style="width:{{ maleW }};background:var(--ink)"></div><div style="width:{{ femaleW }};background:var(--acc)"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>Bărbați</span><span>Femei</span></div>
+      </div>
+      <div data-reveal="">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:20px">Vârstă · bărbați / femei, % din reach</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ ages }}" as="a" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:56px minmax(0,1fr) 72px;gap:16px;align-items:center;font-size:13px">
+              <span style="font-family:'Geist Mono',monospace">{{ a.age }}</span>
+              <div style="display:flex;height:18px;background:var(--trk)"><div style="width:{{ a.mW }};background:var(--ink);transition:width .8s"></div><div style="width:{{ a.fW }};background:var(--acc)"></div></div>
+              <span style="font-family:'Geist Mono',monospace;color:var(--mut);text-align:right">{{ a.male }} / {{ a.female }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s3" style="padding:96px 0 80px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:48px;border-bottom:1px solid var(--rule)">
+    <div data-reveal=""><div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--acc)">§ 03</div><h2 style="font-family:'Hanken Grotesk',sans-serif;font-weight:300;letter-spacing:-.03em;font-size:48px;line-height:1;margin:12px 0 16px">Mesaje</h2><p style="font-size:14px;line-height:1.55;color:var(--mut);margin:0">Unghiul dominant este <strong style="color:var(--ink)">{{ topAngle }}</strong> ({{ topAnglePct }} din reclame). Cel mai folosit tip de hook: <strong style="color:var(--ink)">{{ topHook }}</strong>.</p></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:48px">
+      <div data-reveal="">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding-bottom:12px;border-bottom:1px solid var(--ink)">Unghi de persuasiune</div>
+        <sc-for list="{{ angles }}" as="b" hint-placeholder-count="5"><div style="padding:12px 0;border-bottom:1px solid var(--rule)"><div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span>{{ b.label }}</span><span style="font-family:'Geist Mono',monospace;color:var(--mut)">{{ b.share }}</span></div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ b.w }};background:var(--acc)"></div></div></div></sc-for>
+      </div>
+      <div data-reveal="">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding-bottom:12px;border-bottom:1px solid var(--ink)">Tip de hook</div>
+        <sc-for list="{{ hooks }}" as="b" hint-placeholder-count="5"><div style="padding:12px 0;border-bottom:1px solid var(--rule)"><div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span>{{ b.label }}</span><span style="font-family:'Geist Mono',monospace;color:var(--mut)">{{ b.share }}</span></div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ b.w }};background:var(--ink)"></div></div></div></sc-for>
+      </div>
+      <div data-reveal="">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding-bottom:12px;border-bottom:1px solid var(--ink)">Nivel de awareness</div>
+        <sc-for list="{{ awareness }}" as="b" hint-placeholder-count="5"><div style="padding:12px 0;border-bottom:1px solid var(--rule)"><div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span>{{ b.label }}</span><span style="font-family:'Geist Mono',monospace;color:var(--mut)">{{ b.share }}</span></div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ b.w }};background:var(--mut)"></div></div></div></sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="s4" style="padding:96px 0 80px;border-bottom:1px solid var(--rule)">
+    <div data-reveal="" style="display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:40px;flex-wrap:wrap"><div><div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--acc)">§ 04</div><h2 style="font-family:'Hanken Grotesk',sans-serif;font-weight:300;letter-spacing:-.03em;font-size:48px;line-height:1;margin:12px 0 0">Top 10 jucători</h2></div><p style="font-size:14px;color:var(--mut);margin:0;max-width:44ch">Advertiseri ordonați după reach-ul cumulat al reclamelor. Click pe un rând pentru cea mai performantă reclamă.</p></div>
+    <div style="overflow-x:auto"><div style="min-width:760px">
+      <div style="display:grid;grid-template-columns:48px 56px minmax(0,1.4fr) 90px 110px minmax(0,1.6fr);gap:20px;padding:0 0 10px;border-bottom:1px solid var(--ink);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span>#</span><span></span><span>Advertiser</span><span>Reclame</span><span>Max. zile</span><span>Reach cumulat</span></div>
+      <sc-for list="{{ players }}" as="p" hint-placeholder-count="10">
+        <div data-reveal="" onClick="{{ p.open }}" style="display:grid;grid-template-columns:48px 56px minmax(0,1.4fr) 90px 110px minmax(0,1.6fr);gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule);cursor:pointer" style-hover="background:var(--hov)">
+          <span style="font-family:'Hanken Grotesk',sans-serif;font-size:28px;color:var(--acc)">{{ p.rank }}</span>
+          <sc-if value="{{ p.hasImg }}"><img src="{{ p.img }}" alt="" style="width:56px;height:56px;object-fit:cover;filter:grayscale(1) brightness(.9)"></sc-if>
+          <span style="font-size:16px;font-weight:500">{{ p.name }}</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:14px">{{ p.ads }}</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:14px">{{ p.days }}</span>
+          <div style="display:flex;align-items:center;gap:14px"><div style="flex:1;height:6px;background:var(--trk)"><div style="height:6px;width:{{ p.w }};background:var(--ink)"></div></div><span style="font-family:'Geist Mono',monospace;font-size:13px;width:70px;text-align:right">{{ p.reach }}</span></div>
+        </div>
+      </sc-for>
+    </div></div>
+  </section>
+
+  <section id="s5" style="padding:96px 0 120px">
+    <div data-reveal="" style="display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:32px;flex-wrap:wrap"><div><div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--acc)">§ 05</div><h2 style="font-family:'Hanken Grotesk',sans-serif;font-weight:300;letter-spacing:-.03em;font-size:48px;line-height:1;margin:12px 0 0">Toate reclamele</h2></div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:32px">{{ count }} <span style="color:var(--mut);font-size:20px">din {{ total }}</span></div></div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;padding:20px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);margin-bottom:8px">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+        <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Caută în text, titlu sau advertiser…" style="flex:1;min-width:240px;font:15px 'Hanken Grotesk';padding:10px 0;border:0;border-bottom:1px solid var(--ink);background:transparent;outline:none;color:var(--ink)">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-right:6px">Ordonează</span>
+          <sc-for list="{{ sorts }}" as="o"><sc-if value="{{ o.on }}"><button style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:2px;cursor:pointer">{{ o.label }}</button></sc-if><sc-if value="{{ o.off }}"><button onClick="{{ o.pick }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">{{ o.label }}</button></sc-if></sc-for>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span style="font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-right:6px">Filtre</span>
+        <sc-for list="{{ bucketChips }}" as="c"><sc-if value="{{ c.on }}"><button onClick="{{ c.toggle }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--acc);background:var(--acc);color:var(--bg);border-radius:2px;cursor:pointer">{{ c.label }} · {{ c.n }}</button></sc-if><sc-if value="{{ c.off }}"><button onClick="{{ c.toggle }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">{{ c.label }} · {{ c.n }}</button></sc-if></sc-for>
+        <span style="width:1px;height:18px;background:var(--rule);margin:0 6px"></span>
+        <sc-for list="{{ formatChips }}" as="c"><sc-if value="{{ c.on }}"><button onClick="{{ c.toggle }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--acc);background:var(--acc);color:var(--bg);border-radius:2px;cursor:pointer">{{ c.label }} · {{ c.n }}</button></sc-if><sc-if value="{{ c.off }}"><button onClick="{{ c.toggle }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">{{ c.label }} · {{ c.n }}</button></sc-if></sc-for>
+        <span style="width:1px;height:18px;background:var(--rule);margin:0 6px"></span>
+        <sc-for list="{{ angleOpts }}" as="c"><sc-if value="{{ c.on }}"><button style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:2px;cursor:pointer">{{ c.label }}</button></sc-if><sc-if value="{{ c.off }}"><button onClick="{{ c.pick }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">{{ c.label }}</button></sc-if></sc-for>
+        <button onClick="{{ reset }}" style="font:13px 'Hanken Grotesk';padding:5px 4px;border:0;background:transparent;color:var(--acc);cursor:pointer;text-decoration:underline;margin-left:auto">Resetează</button>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto"><div style="min-width:900px">
+      <div style="display:grid;grid-template-columns:40px 72px minmax(0,1fr) 150px 70px 180px 20px;gap:20px;padding:12px 0;border-bottom:1px solid var(--ink);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span>#</span><span></span><span>Advertiser · mesaj</span><span>Unghi · format</span><span>Zile</span><span>Reach</span><span></span></div>
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+        <div onClick="{{ r.open }}" style="display:grid;grid-template-columns:40px 72px minmax(0,1fr) 150px 70px 180px 20px;gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule);cursor:pointer;transition:background .2s" style-hover="background:var(--hov)">
+          <span style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--mut)">{{ r.n }}</span>
+          <sc-if value="{{ r.hasImg }}"><img src="{{ r.img }}" alt="" loading="lazy" style="width:72px;height:72px;object-fit:cover;background:var(--trk)"></sc-if>
+          <sc-if value="{{ r.noImg }}"><div style="width:72px;height:72px;background:var(--trk)"></div></sc-if>
+          <div style="min-width:0">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:600;letter-spacing:.02em">{{ r.page }}</span><sc-if value="{{ r.isWinner }}"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)">● {{ r.bucket }}</span></sc-if><sc-if value="{{ r.notWinner }}"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">○ {{ r.bucket }}</span></sc-if></div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-size:21px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ r.hook }}</div>
+          </div>
+          <div style="font-size:13px;line-height:1.4"><div>{{ r.angle }}</div><div style="color:var(--mut)">{{ r.format }}</div></div>
+          <span style="font-family:'Geist Mono',monospace;font-size:15px">{{ r.days }}</span>
+          <div><div style="display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:13px;margin-bottom:6px"><span>{{ r.reach }}</span><span style="color:var(--mut);font-size:11px">{{ r.perDay }}</span></div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ r.reachW }};background:var(--acc)"></div></div></div>
+          <span style="font-size:16px;color:var(--acc)">→</span>
+        </div>
+      </sc-for>
+    </div></div>
+    <sc-if value="{{ empty }}"><div style="padding:64px 0;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-size:28px;color:var(--mut)">Nicio reclamă nu corespunde filtrelor.</div></sc-if>
+    <sc-if value="{{ hasMore }}"><div style="display:flex;justify-content:center;padding-top:40px"><button onClick="{{ showMore }}" style="font:500 14px 'Hanken Grotesk';padding:14px 32px;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer" style-hover="background:var(--ink);color:var(--bg)">Arată mai multe</button></div></sc-if>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ isLand }}" hint-placeholder-val="{{ false }}">
+<main style="max-width:1360px;margin:0 auto;padding:0 40px">
+  <section style="padding:88px 0 56px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:64px;border-bottom:1px solid var(--ink);align-items:end">
+    <div data-reveal=""><div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:28px">Partea a II-a · Pagini de destinație</div>
+      <h1 style="font-family:'Hanken Grotesk',sans-serif;font-weight:200;font-size:clamp(52px,7.4vw,120px);line-height:.95;letter-spacing:-.045em;margin:0;text-wrap:balance">Unde ajunge <em style="color:var(--acc);font-style:normal;font-weight:400">clientul</em> după click</h1></div>
+    <p data-reveal="" style="font-size:17px;line-height:1.55;margin:0 0 12px;text-wrap:pretty">{{ lN }} destinații extrase din reclamele analizate, evaluate după tipul paginii, acțiunea principală, transparența prețului și semnalele de încredere.</p>
+  </section>
+  <section style="padding:80px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));border-bottom:1px solid var(--rule)">
+    <sc-for list="{{ lkpis }}" as="k" hint-placeholder-count="4"><div data-reveal="" style="padding-right:24px;margin-right:24px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:10px"><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:200;font-size:80px;line-height:.9;letter-spacing:-.04em;color:var(--acc)">{{ k.v }}</div><div style="font-size:14px;font-weight:600">{{ k.k }}</div><div style="font-size:13px;color:var(--mut);line-height:1.45">{{ k.note }}</div></div></sc-for>
+  </section>
+  <section style="padding:80px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:48px;border-bottom:1px solid var(--rule)">
+    <div data-reveal=""><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding-bottom:12px;border-bottom:1px solid var(--ink)">Tipul paginii</div><sc-for list="{{ ltypes }}" as="b"><div style="padding:12px 0;border-bottom:1px solid var(--rule)"><div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span>{{ b.label }}</span><span style="font-family:'Geist Mono',monospace;color:var(--mut)">{{ b.pct }}</span></div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ b.w }};background:var(--acc)"></div></div></div></sc-for></div>
+    <div data-reveal=""><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding-bottom:12px;border-bottom:1px solid var(--ink)">Acțiunea principală</div><sc-for list="{{ lactions }}" as="b"><div style="padding:12px 0;border-bottom:1px solid var(--rule)"><div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span>{{ b.label }}</span><span style="font-family:'Geist Mono',monospace;color:var(--mut)">{{ b.pct }}</span></div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ b.w }};background:var(--ink)"></div></div></div></sc-for></div>
+    <div data-reveal=""><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding-bottom:12px;border-bottom:1px solid var(--ink)">Afișarea prețului</div><sc-for list="{{ lprices }}" as="b"><div style="padding:12px 0;border-bottom:1px solid var(--rule)"><div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span>{{ b.label }}</span><span style="font-family:'Geist Mono',monospace;color:var(--mut)">{{ b.pct }}</span></div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ b.w }};background:var(--mut)"></div></div></div></sc-for></div>
+  </section>
+  <section style="padding:80px 0 120px">
+    <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:24px;gap:24px;flex-wrap:wrap"><h2 style="font-family:'Hanken Grotesk',sans-serif;font-weight:300;letter-spacing:-.03em;font-size:48px;line-height:1;margin:0">Toate paginile</h2><div style="font-family:'Hanken Grotesk',sans-serif;font-size:32px">{{ lcount }} <span style="color:var(--mut);font-size:20px">din {{ lN }}</span></div></div>
+    <div style="display:flex;flex-direction:column;gap:14px;padding:20px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center"><input value="{{ lq }}" onChange="{{ onLq }}" placeholder="Caută după domeniu, titlu sau advertiser…" style="flex:1;min-width:240px;font:15px 'Hanken Grotesk';padding:10px 0;border:0;border-bottom:1px solid var(--ink);background:transparent;outline:none;color:var(--ink)">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-right:6px">Ordonează</span><sc-for list="{{ lsorts }}" as="o"><sc-if value="{{ o.on }}"><button style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:2px">{{ o.label }}</button></sc-if><sc-if value="{{ o.off }}"><button onClick="{{ o.pick }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">{{ o.label }}</button></sc-if></sc-for></div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-right:6px;width:64px">Tip</span><sc-for list="{{ ltypeOpts }}" as="c"><sc-if value="{{ c.on }}"><button style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--acc);background:var(--acc);color:var(--bg);border-radius:2px">{{ c.label }}</button></sc-if><sc-if value="{{ c.off }}"><button onClick="{{ c.pick }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">{{ c.label }}</button></sc-if></sc-for></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-right:6px;width:64px">Acțiune</span><sc-for list="{{ lactionOpts }}" as="c"><sc-if value="{{ c.on }}"><button style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--acc);background:var(--acc);color:var(--bg);border-radius:2px">{{ c.label }}</button></sc-if><sc-if value="{{ c.off }}"><button onClick="{{ c.pick }}" style="font:13px 'Hanken Grotesk';padding:5px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">{{ c.label }}</button></sc-if></sc-for><button onClick="{{ lreset }}" style="font:13px 'Hanken Grotesk';border:0;background:transparent;color:var(--acc);cursor:pointer;text-decoration:underline;margin-left:auto">Resetează</button></div>
+    </div>
+    <div style="overflow-x:auto"><div style="min-width:900px">
+      <div style="display:grid;grid-template-columns:40px 72px minmax(0,1fr) 160px 120px 120px 60px 20px;gap:20px;padding:12px 0;border-bottom:1px solid var(--ink);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span>#</span><span></span><span>Pagină</span><span>Tip · acțiune</span><span>Încredere</span><span>Potrivire</span><span>Zile</span><span></span></div>
+      <sc-for list="{{ lrows }}" as="r" hint-placeholder-count="8">
+        <div onClick="{{ r.open }}" style="display:grid;grid-template-columns:40px 72px minmax(0,1fr) 160px 120px 120px 60px 20px;gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule);cursor:pointer" style-hover="background:var(--hov)">
+          <span style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--mut)">{{ r.n }}</span>
+          <sc-if value="{{ r.hasImg }}"><img src="{{ r.img }}" alt="" loading="lazy" style="width:72px;height:72px;object-fit:cover"></sc-if><sc-if value="{{ r.noImg }}"><div style="width:72px;height:72px;background:var(--trk)"></div></sc-if>
+          <div style="min-width:0"><div style="font-size:12px;font-weight:600;margin-bottom:4px">{{ r.domain }}</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:20px;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ r.title }}</div></div>
+          <div style="font-size:13px;line-height:1.4"><div>{{ r.type }}</div><div style="color:var(--mut)">{{ r.action }}</div></div>
+          <div><div style="font-family:'Geist Mono',monospace;font-size:13px;margin-bottom:6px">{{ r.trust }}</div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ r.trustW }};background:var(--ink)"></div></div></div>
+          <div><div style="font-family:'Geist Mono',monospace;font-size:13px;margin-bottom:6px">{{ r.match }}</div><div style="height:3px;background:var(--trk)"><div style="height:3px;width:{{ r.matchW }};background:var(--acc)"></div></div></div>
+          <span style="font-family:'Geist Mono',monospace;font-size:15px">{{ r.days }}</span><span style="color:var(--acc)">→</span>
+        </div>
+      </sc-for>
+    </div></div>
+    <sc-if value="{{ lempty }}"><div style="padding:64px 0;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-size:28px;color:var(--mut)">Nicio pagină nu corespunde filtrelor.</div></sc-if>
+    <sc-if value="{{ lhasMore }}"><div style="display:flex;justify-content:center;padding-top:40px"><button onClick="{{ lshowMore }}" style="font:500 14px 'Hanken Grotesk';padding:14px 32px;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer">Arată mai multe</button></div></sc-if>
+  </section>
+</main>
+</sc-if>
+
+<footer style="border-top:1px solid var(--ink);max-width:1360px;margin:0 auto;padding:28px 40px 48px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--mut)"><span>Sursa: Meta Ad Library · date colectate {{ collected }}</span><span>Reach estimat de Meta pentru UE. Clasificări generate automat.</span></footer>
+
+<sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeModal }}" style="position:fixed;inset:0;z-index:50;background:var(--ov);display:flex;justify-content:flex-end">
+    <div onClick="{{ stop }}" style="width:min(920px,100%);height:100%;overflow:auto;background:var(--bg);padding:40px 48px;box-sizing:border-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ink);padding-bottom:16px"><span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)">Fișa reclamei · {{ m.bucket }}</span><button onClick="{{ closeModal }}" style="font:14px 'Hanken Grotesk';border:0;background:transparent;cursor:pointer;color:var(--ink)">Închide ✕</button></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:40px;padding-top:32px">
+        <div><sc-if value="{{ m.hasImg }}"><img src="{{ m.img }}" alt="" style="width:100%;display:block;background:var(--trk)"></sc-if>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;margin:20px 0 0"><dt style="color:var(--mut)">Început</dt><dd style="margin:0">{{ m.start }}</dd><dt style="color:var(--mut)">Format</dt><dd style="margin:0">{{ m.format }} · {{ m.variants }} variante</dd><dt style="color:var(--mut)">Platforme</dt><dd style="margin:0">{{ m.platforms }}</dd><dt style="color:var(--mut)">CTA</dt><dd style="margin:0">{{ m.cta }}</dd><dt style="color:var(--mut)">Destinație</dt><dd style="margin:0"><a href="{{ m.linkUrl }}" target="_blank" style="text-decoration:underline">{{ m.link }}</a></dd></dl>
+          <a href="{{ m.lib }}" target="_blank" style="display:inline-block;margin-top:20px;font-size:13px;color:var(--acc);text-decoration:underline">Deschide în Ad Library ↗</a></div>
+        <div>
+          <div style="font-size:13px;font-weight:600">{{ m.page }}</div>
+          <h3 style="font-family:'Hanken Grotesk',sans-serif;font-weight:400;font-size:36px;line-height:1.05;margin:8px 0 24px;text-wrap:balance">{{ m.hook }}</h3>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)">
+            <div style="padding:14px 0"><div style="font-family:'Hanken Grotesk',sans-serif;font-size:36px">{{ m.days }}</div><div style="font-size:12px;color:var(--mut)">zile active</div></div>
+            <div style="padding:14px 0"><div style="font-family:'Hanken Grotesk',sans-serif;font-size:36px">{{ m.reach }}</div><div style="font-size:12px;color:var(--mut)">reach UE</div></div>
+            <div style="padding:14px 0"><div style="font-family:'Hanken Grotesk',sans-serif;font-size:36px">{{ m.male }}</div><div style="font-size:12px;color:var(--mut)">bărbați</div></div>
+          </div>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;margin:20px 0"><dt style="color:var(--mut)">Unghi</dt><dd style="margin:0">{{ m.angle }}</dd><dt style="color:var(--mut)">Hook</dt><dd style="margin:0">{{ m.hookType }}</dd><dt style="color:var(--mut)">Awareness</dt><dd style="margin:0">{{ m.awareness }}</dd><dt style="color:var(--mut)">Emoție</dt><dd style="margin:0">{{ m.emotion }}</dd><dt style="color:var(--mut)">Structură</dt><dd style="margin:0">{{ m.structure }}</dd><dt style="color:var(--mut)">Segment top</dt><dd style="margin:0">{{ m.top }}</dd></dl>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px"><sc-for list="{{ m.flags }}" as="f"><sc-if value="{{ f.yes }}"><span style="font-size:12px;padding:4px 10px;background:var(--ink);color:var(--bg);border-radius:2px">✓ {{ f.label }}</span></sc-if><sc-if value="{{ f.no }}"><span style="font-size:12px;padding:4px 10px;border:1px solid var(--rule);color:var(--mut);border-radius:2px">{{ f.label }}</span></sc-if></sc-for></div>
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px">Textul reclamei</div>
+          <p style="white-space:pre-wrap;font-size:14px;line-height:1.6;margin:0;overflow-wrap:anywhere">{{ m.body }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ lmodalOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeLModal }}" style="position:fixed;inset:0;z-index:50;background:var(--ov);display:flex;justify-content:flex-end">
+    <div onClick="{{ stop }}" style="width:min(760px,100%);height:100%;overflow:auto;background:var(--bg);padding:40px 48px;box-sizing:border-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ink);padding-bottom:16px"><span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)">Fișa paginii · {{ lm.type }}</span><button onClick="{{ closeLModal }}" style="font:14px 'Hanken Grotesk';border:0;background:transparent;cursor:pointer;color:var(--ink)">Închide ✕</button></div>
+      <div style="font-size:13px;font-weight:600;margin-top:32px">{{ lm.domain }}</div>
+      <h3 style="font-family:'Hanken Grotesk',sans-serif;font-weight:400;font-size:40px;line-height:1.05;margin:8px 0 12px">{{ lm.title }}</h3>
+      <a href="{{ lm.url }}" target="_blank" style="font-size:13px;color:var(--acc);text-decoration:underline;overflow-wrap:anywhere">{{ lm.url }} ↗</a>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);margin:28px 0">
+        <div style="padding:14px 0"><div style="font-family:'Hanken Grotesk',sans-serif;font-size:36px">{{ lm.trust }}</div><div style="font-size:12px;color:var(--mut)">încredere</div></div>
+        <div style="padding:14px 0"><div style="font-family:'Hanken Grotesk',sans-serif;font-size:36px">{{ lm.match }}</div><div style="font-size:12px;color:var(--mut)">potrivire reclamă</div></div>
+        <div style="padding:14px 0"><div style="font-family:'Hanken Grotesk',sans-serif;font-size:36px">{{ lm.cta }}</div><div style="font-size:12px;color:var(--mut)">claritate CTA</div></div>
+        <div style="padding:14px 0"><div style="font-family:'Hanken Grotesk',sans-serif;font-size:36px">{{ lm.spec }}</div><div style="font-size:12px;color:var(--mut)">specificitate</div></div>
+      </div>
+      <dl style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;margin:0 0 24px"><dt style="color:var(--mut)">Acțiune</dt><dd style="margin:0">{{ lm.action }}</dd><dt style="color:var(--mut)">Preț</dt><dd style="margin:0">{{ lm.price }}</dd><dt style="color:var(--mut)">Reclame</dt><dd style="margin:0">{{ lm.nAds }} · max. {{ lm.days }} zile</dd></dl>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px"><sc-for list="{{ lm.facts }}" as="f"><sc-if value="{{ f.yes }}"><span style="font-size:12px;padding:4px 10px;background:var(--ink);color:var(--bg);border-radius:2px">✓ {{ f.label }}</span></sc-if><sc-if value="{{ f.no }}"><span style="font-size:12px;padding:4px 10px;border:1px solid var(--rule);color:var(--mut);border-radius:2px">{{ f.label }}</span></sc-if></sc-for></div>
+      <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px">Meta description</div><p style="font-size:14px;line-height:1.6;margin:0 0 24px">{{ lm.desc }}</p>
+      <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px">Hook-urile reclamelor care trimit aici</div>
+      <sc-for list="{{ lm.hooks }}" as="h"><p style="font-family:'Hanken Grotesk',sans-serif;font-size:22px;line-height:1.25;margin:0 0 12px;padding-left:16px;border-left:2px solid var(--acc)">{{ h.h }}</p></sc-for>
+    </div>
+  </div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {theme: "dark", page: "ads", q: "", buckets: ["winner", "promising"], formats: [], angle: "", sort: "reach", limit: 30, modal: null, lq: "", ltype: "", laction: "", lsort: "days", llimit: 30, lmodal: null};
+  componentDidMount() { let th = "dark"; try { th = localStorage.getItem("raportC-theme") || "dark"; } catch (e) {} this.applyTheme(th); const t = () => window.RL ? window.RL.mount(this) : setTimeout(t, 50); t(); }
+  componentWillUnmount() { window.RL && window.RL.unmount(this); }
+  applyTheme(t) { document.documentElement.setAttribute("data-theme", t); try { localStorage.setItem("raportC-theme", t); } catch (e) {} this.setState({theme: t}); }
+  renderVals() {
+    const light = this.state.theme === "light";
+    const v = window.RL ? window.RL.vals(this) : {notReady: true};
+    return Object.assign(v, {themeLabel: light ? "Light" : "Dark", knobLeft: light ? "18px" : "2px", toggleTheme: () => this.applyTheme(light ? "dark" : "light")});
+  }
+}
+</script>
+</body>
+</html>

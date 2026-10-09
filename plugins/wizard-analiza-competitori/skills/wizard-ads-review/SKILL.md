@@ -69,7 +69,7 @@ Ideea de bază: reclamele sunt ceva de moment, deci skill-ul adună și arată *
    - 3 idei concrete de testat în reclamele userului;
    - judecățile din lista `unsure` a unei reclame sunt incerte: nu le prezenta ca fapte.
 
-9. **Predă dosarul.** Dă calea `runs/<slug>/index.html`. Pe WSL oferă și comanda de deschidere în Windows: `explorer.exe "$(wslpath -w runs/<slug>/index.html)"`.
+9. **Predă raportul.** Dă calea `runs/<slug>/raport.html`. Pe WSL oferă și comanda de deschidere în Windows: `explorer.exe "$(wslpath -w runs/<slug>/raport.html)"`. Tabul Landing-uri se umple după `/wizard-landing-review`.
 
 ## Sursă alternativă: SearchAPI.io
 
@@ -93,7 +93,7 @@ Cere `SEARCHAPI_API_KEY` în `.env`. Costă un credit per pagină de 30 de recla
 
 ## Fișierele unui dosar
 
-`index.html` (pagina cu filtre, se deschide cu dublu-click), `data.js` (datele pentru pagină), `ads.json` (aceleași date pentru tine), `raw.json` (ce a adunat browserul), `brief.json` (cercetarea userului, față de care se judecă potrivirea), `images/`.
+`raport.html` (raportul: tabul Reclame și tabul Landing-uri; se deschide cu dublu-click, dar are nevoie de internet pentru fonturi și pentru React, încărcat de `support.js`), `report-data.js` (datele raportului, refăcut de ambele `analyze.py`), `report-logic.js` și `support.js` (copiate din `assets/raport/`), `ads.json` (aceleași date pentru tine), `raw.json` (ce a adunat browserul), `brief.json` (cercetarea userului, față de care se judecă potrivirea), `images/`.
 
 ## Verificări rapide, fără rețea
 

@@ -4,7 +4,7 @@ Repo-ul e un marketplace Claude Code (`.claude-plugin/marketplace.json`) cu un s
 
 Pluginul conține patru skill-uri:
 - `wizard-ads-review` adună reclamele active ale unei nișe din Meta Ad Library, le judecă textul cu Jev (TypeSafe) față de cercetarea userului, adaugă reach-ul din UE și produce un dosar local cu o pagină HTML cu filtre.
-- `wizard-landing-review` pornește de la un astfel de dosar: vizitează paginile de landing ale reclamelor potrivite, salvează fiecare pagină ca JSON structurat, o judecă cu Jev și adaugă `landings.html` în dosar.
+- `wizard-landing-review` pornește de la un astfel de dosar: vizitează paginile de landing ale reclamelor potrivite, salvează fiecare pagină ca JSON structurat, o judecă cu Jev și o adaugă în tabul Landing-uri din `raport.html`.
 - `wizard-analiza-reclame` le cheamă pe rând pe primele două, pe același dosar, și dă un raport comun reclamă → pagină. Doar `SKILL.md`, fără cod.
 - `wizard-competitori-install` instalează pas cu pas, cu acordul userului, ce le trebuie celorlalte două (uv, Python, Chromium, `.env`).
 
@@ -18,9 +18,9 @@ Fluxul, modurile și limitele sunt în `SKILL.md`-ul fiecărui skill. Citește-l
 - `plugins/wizard-analiza-competitori/skills/wizard-ads-review/scripts/collect.py`: colectare și reach. Două surse: `browser` (Playwright, implicit) și `searchapi` (SearchAPI.io, fără browser).
 - `plugins/wizard-analiza-competitori/skills/wizard-ads-review/scripts/analyze.py`: durate, grupare, judecăți Jev cu cache, rezumat, pagină.
 - `plugins/wizard-analiza-competitori/skills/wizard-ads-review/scripts/questions.py`: întrebările și categoriile pentru Jev. Se editează doar la cererea userului; după orice schimbare se rulează `reanalyze`.
-- `plugins/wizard-analiza-competitori/skills/wizard-ads-review/assets/viewer.html`: șablonul paginii din dosar.
+- `plugins/wizard-analiza-competitori/skills/wizard-ads-review/assets/raport/`: raportul din dosar (`raport.html` + `report-logic.js` + `support.js`, export Claude Design, runtime-ul nu se editează). `write_report` din `analyze.py` îl copiază și scrie `report-data.js` (`window.RD`) din `ads.json` și `landings.json`; ambele `analyze.py` îl apelează.
 - `plugins/wizard-analiza-competitori/skills/wizard-landing-review/scripts/fetch.py`: vizitează landing-urile cu Playwright și le transformă în JSON (hero, secțiuni, butoane, formulare, prețuri, contacte). Are nevoie de `link_url`, păstrat de `normalize` din `collect.py`.
-- `plugins/wizard-analiza-competitori/skills/wizard-landing-review/scripts/analyze.py`: judecăți Jev cu cache, rezumat, `landings.html`. Refolosește `load_research` și `pct` din `wizard-ads-review/scripts/analyze.py`.
+- `plugins/wizard-analiza-competitori/skills/wizard-landing-review/scripts/analyze.py`: judecăți Jev cu cache, rezumat, `meta`/`summary` în `landings.json`, apoi `write_report`. Refolosește `load_research` și `pct` din `wizard-ads-review/scripts/analyze.py`.
 - `plugins/wizard-analiza-competitori/skills/wizard-landing-review/scripts/questions.py`: întrebările Jev pentru landing. Aceleași reguli ca la `wizard-ads-review`.
 - `runs/`: tot ce se generează (dosare, imagini, profilul de browser). Nu se comite și nu se arhivează.
 

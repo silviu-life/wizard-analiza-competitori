@@ -2,10 +2,10 @@
 # requires-python = ">=3.10"
 # dependencies = ["typesafe-sdk"]
 # ///
-"""Judge the saved landing pages with Jev and build runs/<slug>/landings.html.
+"""Judge the saved landing pages with Jev and add them to runs/<slug>/raport.html.
 
 Reads  runs/<slug>/landings.json, landings/*.json (from fetch.py), ads.json, brief.json
-Writes runs/<slug>/landings.json (with judgments), landings-data.js, landings.html
+Writes runs/<slug>/landings.json (with judgments, meta and summary) and raport.html, via write_report in wizard-ads-review
 Jev judges the page text; facts the page states plainly (forms, phones, prices found)
 are read here, in code.
 """
@@ -15,13 +15,11 @@ import datetime as dt
 import hashlib
 import importlib.util
 import json
-import shutil
 import sys
 from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-VIEWER = HERE.parent / "assets" / "viewer.html"
 LOW_CONFIDENCE = 0.5
 
 # load_research and pct live in wizard-ads-review; loaded by path because this script is also called analyze
@@ -154,7 +152,7 @@ def main():
     ads = {i: a for a in dossier["ads"] for i in a.get("grouped_ids") or [a["id"]]}
     research = load_research(run, dossier["meta"]["niche"])
     judge = pick_judge(args.claude_model)
-    qhash = hashlib.sha1((repr(QUESTIONS) + json.dumps(research, sort_keys=True) + str(judge)).encode()).hexdigest()[:12]
+    qhash = hashlib.sha1((repr(QUESTIONS) + json.dumps(research, sort_keys=True) + ads_analyze.judge_tag(judge)).encode()).hexdigest()[:12]
     if index.get("questions_hash") != qhash:  # questions, brief or judge changed: judge everything again
         for p in index["pages"]:
             p.pop("j", None)
@@ -202,18 +200,13 @@ def main():
             "n_web": sum(p["type"] == "web" for p in pages), "n_saved": len(bodies),
             "n_judged": summary["n_pages"], "n_failed": failed,
             "dims": {"choices": CHOICES, "nouls": NOULS, "scores": SCORES, "facts": fact_ids}}
-    index.update(questions_hash=qhash, pages=pages)
+    index.update(questions_hash=qhash, pages=pages, meta=meta, summary=summary)
     index_path.write_text(json.dumps(index, ensure_ascii=False, indent=1))
-    view = [dict(p, landing=bodies.get(p["id"])) for p in pages]
-    # a <script src>, not fetch(): fetch is blocked on file://
-    dump = lambda o: json.dumps(o, ensure_ascii=False).replace("</", "<\\/")
-    (run / "landings-data.js").write_text(
-        f"window.META={dump(meta)};\nwindow.SUMMARY={dump(summary)};\nwindow.LANDINGS={dump(view)};\n")
-    shutil.copyfile(VIEWER, run / "landings.html")
+    ads_analyze.write_report(run)
 
     print(f"{meta['n_ads']} ads -> {meta['n_destinations']} destinations, {meta['n_web']} web | saved {meta['n_saved']} | "
           f"judged {meta['n_judged']} | failed {failed} | {summary['destinations']}")
-    print(f"DOSSIER={run / 'landings.html'}")
+    print(f"DOSSIER={run / 'raport.html'}")
 
 
 if __name__ == "__main__":

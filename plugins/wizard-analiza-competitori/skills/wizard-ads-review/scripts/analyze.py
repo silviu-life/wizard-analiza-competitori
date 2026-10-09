@@ -6,7 +6,7 @@
 
 Only active ads are analyzed.
 Reads  runs/<slug>/raw.json
-Writes runs/<slug>/ads.json, data.js, index.html
+Writes runs/<slug>/ads.json and raport.html (with report-data.js, report-logic.js, support.js)
 Jev judges the copy; everything about dates and counts is computed here, because
 Jev reads dates and numbers as text.
 """
@@ -23,7 +23,7 @@ from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-VIEWER = HERE.parent / "assets" / "viewer.html"
+REPORT = HERE.parent / "assets" / "raport"  # the design: raport.html + its runtime and logic, copied as they are
 EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
 LOW_CONFIDENCE = 0.5
 
@@ -257,6 +257,51 @@ async def claude_judge(items, questions, model, batch=40, concurrency=2):
     return out
 
 
+def report_ad(a):
+    """One ad in the shape assets/raport/report-logic.js reads."""
+    aud = a.get("aud") or {}
+    return {"id": a["id"], "page": a["page_name"], "body": a["body"], "title": a["title"], "hook": a["hook"], "days": a["days"],
+            "bucket": a["bucket"], "format": a["format"], "start": a["start_date"], "variants": a["variants"], "inNiche": a["in_niche"],
+            "img": a.get("image"), "lib": a.get("library_url"), "link": a.get("link_url"), "cta": a.get("cta"),
+            "platforms": a.get("platforms") or [], "reach": aud.get("eu_total"), "perDay": aud.get("per_day"),
+            "gender": aud.get("gender"), "ages": aud.get("ages"), "top": aud.get("top_segment"), "j": a.get("j")}
+
+
+def report_land(p, body, ads):
+    """One landing destination in the shape report-logic.js reads; `ads` maps every grouped ad id to its ad."""
+    top = max((ads[i] for i in p["ad_ids"] if i in ads), key=lambda a: a["days"], default={})
+    return {"id": p["id"], "url": p.get("final_url") or p["url"], "title": body.get("title") or p.get("title"), "type": p["type"],
+            "thin": p.get("thin"), "page": top.get("page_name"), "nAds": len(p["ad_ids"]), "days": p.get("max_days") or 0,
+            "facts": p.get("facts") or {}, "price": p.get("price"), "thumb": top.get("image"), "desc": body.get("meta_description"),
+            "hero": ((body.get("hero") or {}).get("text") or "")[:500], "hooks": [a["hook"] for a in p.get("ads", [])],
+            "j": p.get("j") or {}}
+
+
+def write_report(run):
+    """runs/<slug>/raport.html: one page, ads and landing pages, from ads.json plus landings.json when it exists.
+    Data goes in report-data.js, a <script src>, because fetch() is blocked on file://."""
+    d = json.loads((run / "ads.json").read_text())
+    rd = {"meta": d["meta"], "summary": d["summary"], "ads": [report_ad(a) for a in d["ads"]],
+          "lmeta": {}, "lsummary": {"n_pages": 0, "destinations": {}, "dims": {}}, "lands": []}
+    index_path = run / "landings.json"
+    if index_path.exists():
+        index = json.loads(index_path.read_text())
+        ads = {i: a for a in d["ads"] for i in a.get("grouped_ids") or [a["id"]]}
+        body = lambda p: json.loads((run / p["file"]).read_text()) if p.get("file") and not p.get("error") else {}
+        rd.update(lmeta=index.get("meta") or {}, lsummary=index.get("summary") or rd["lsummary"],
+                  lands=[report_land(p, body(p), ads) for p in index["pages"]])
+    dump = json.dumps(rd, ensure_ascii=False).replace("</", "<\\/")
+    (run / "report-data.js").write_text(f"window.RD={dump};\n")
+    for f in ("support.js", "report-logic.js"):
+        shutil.copyfile(REPORT / f, run / f)
+    shutil.copyfile(REPORT / "raport.html", run / "raport.html")
+
+
+def judge_tag(judge):
+    """Part of the cache hash: empty for Jev, so dossiers judged before the Claude fallback keep their cache."""
+    return "" if judge in ("jev", None) else judge
+
+
 def pick_judge(claude_model):
     """Jev when there is a TypeSafe key, else Claude Code when it is installed, else None."""
     if os.environ.get("TYPESAFE_API_KEY"):
@@ -298,6 +343,11 @@ def selfcheck():
     ad = {"jev_error": "old"}
     store(ad, got[7], qs)
     assert ad == {"j": {"c": "b", "n": 0.33, "s": 0.5}, "conf": {"c": 0.91, "s": 0.4}}, ad
+    ads_by_id = {"1": {"page_name": "P", "days": 3, "image": "images/1.jpg"}, "2": {"page_name": "Q", "days": 9, "image": "images/2.jpg"}}
+    land = report_land({"id": "x", "url": "http://a", "final_url": "https://a/", "type": "web", "ad_ids": ["1", "2", "3"],
+                        "ads": [{"hook": "h"}], "max_days": 9}, {"title": "T", "hero": {"text": "w" * 900}}, ads_by_id)
+    assert (land["url"], land["page"], land["thumb"], land["nAds"], len(land["hero"]), land["j"]) == ("https://a/", "Q", "images/2.jpg", 3, 500, {}), land
+    assert report_land({"id": "y", "url": "u", "type": "whatsapp", "ad_ids": []}, {}, {})["facts"] == {}  # non-web: logic reads facts.*
     print("analyze selfcheck ok")
 
 
@@ -338,7 +388,7 @@ def main():
 
     judge = pick_judge(args.claude_model)
     # Cache: judgments survive re-runs unless the questions, the research brief or the judge changed.
-    qhash = hashlib.sha1((repr(QUESTIONS) + json.dumps(research, sort_keys=True) + judge).encode()).hexdigest()[:12]
+    qhash = hashlib.sha1((repr(QUESTIONS) + json.dumps(research, sort_keys=True) + judge_tag(judge)).encode()).hexdigest()[:12]
     out_path = run / "ads.json"
     if out_path.exists():
         old = json.loads(out_path.read_text())
@@ -387,14 +437,11 @@ def main():
             "dims": {"choices": CHOICES, "nouls": NOULS, "scores": SCORES}}
     out_path.write_text(json.dumps({"questions_hash": qhash, "meta": meta, "summary": summary, "ads": ads},
                                    ensure_ascii=False, indent=1))
-    # data.js, not fetch(ads.json): fetch is blocked on file://, a <script src> is not
-    dump = lambda o: json.dumps(o, ensure_ascii=False).replace("</", "<\\/")
-    (run / "data.js").write_text(f"window.META={dump(meta)};\nwindow.SUMMARY={dump(summary)};\nwindow.ADS={dump(ads)};\n")
-    shutil.copyfile(VIEWER, run / "index.html")
+    write_report(run)
 
     print(f"{meta['n_collected']} ads -> {meta['n_creatives']} creatives | judged {meta['n_judged']} | "
           f"off-niche {meta['n_off_niche']} | failed {failed} | buckets {summary['buckets']}")
-    print(f"DOSSIER={run / 'index.html'}")
+    print(f"DOSSIER={run / 'raport.html'}")
 
 
 if __name__ == "__main__":

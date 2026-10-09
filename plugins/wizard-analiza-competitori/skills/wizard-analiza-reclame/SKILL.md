@@ -30,7 +30,7 @@ Leagă cele două skill-uri ale pluginului: întâi reclamele, apoi paginile la 
    - 3 idei concrete de testat, fiecare pe ambele părți: ce scrii în reclamă și ce pui pe primul ecran al paginii;
    - judecățile din listele `unsure` sunt incerte, iar tiparele sunt descrieri, nu dovezi: vedem doar reclame active.
 
-6. **Predă ambele pagini:** `runs/<slug>/index.html` (reclamele) și `runs/<slug>/landings.html` (paginile). Pe WSL: `explorer.exe "$(wslpath -w runs/<slug>/index.html)"`.
+6. **Predă raportul:** `runs/<slug>/raport.html`, cu tabul Reclame și tabul Landing-uri. Pe WSL: `explorer.exe "$(wslpath -w runs/<slug>/raport.html)"`.
 
 ## Reluare
 

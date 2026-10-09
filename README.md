@@ -50,7 +50,7 @@ Totul ajunge în `runs/<nișă>-<țară>/` (o rulare nouă pe aceeași nișă ș
 
 | Fișier | Ce e |
 |---|---|
-| `index.html` | pagina cu filtre; se deschide cu dublu-click |
+| `raport.html` | raportul cu filtre, tab Reclame și tab Landing-uri; se deschide cu dublu-click (cere internet pentru fonturi și React) |
 | `ads.json` | aceleași date, pentru Claude sau pentru alte scripturi |
 | `raw.json` | ce s-a colectat, înainte de analiză |
 | `brief.json` | descrierea afacerii tale, față de care se judecă potrivirea |
@@ -67,7 +67,7 @@ Al doilea skill, `wizard-landing-review`, pornește de la un dosar făcut de `/w
 /wizard-landing-review reanalyze <slug>      rejudecă paginile deja salvate
 ```
 
-Adaugă în dosar `landings.html` (pagina cu filtre), `landings.json` și `landings/`, cu câte un JSON pe pagină. Dosarele colectate înainte de acest skill nu au URL-ul paginii de landing, așa că trebuie colectate din nou cu `/wizard-ads-review`.
+Umple tabul Landing-uri din `raport.html` și adaugă în dosar `landings.json` și `landings/`, cu câte un JSON pe pagină. Dosarele colectate înainte de acest skill nu au URL-ul paginii de landing, așa că trebuie colectate din nou cu `/wizard-ads-review`.
 
 ## Două surse de date
 
