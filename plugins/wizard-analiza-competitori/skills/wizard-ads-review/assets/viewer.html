@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dosar reclame</title>
+<style>
+:root {
+  --ink: #000; --paper: #fff; --desk: #dde7f0;
+  --winner: #22e06b; --promising: #ffd23f; --too_new: #7cc6ff; --alert: #ff6b6b;
+  --pick: #b28dff;
+  --edge: 3px solid var(--ink); --drop: 5px 5px 0 var(--ink);
+  --display: "Arial Black", "Arial Bold", Impact, "Helvetica Neue", sans-serif;
+  --text: Verdana, Tahoma, "DejaVu Sans", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--desk); color: var(--ink); font: 14px/1.5 var(--text); }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+.masthead { background: var(--ink); color: var(--paper); padding: 22px 24px 20px; }
+.masthead h1 { font: 900 clamp(26px, 4.4vw, 52px)/1 var(--display); margin: 0 0 8px; letter-spacing: -0.02em; }
+.masthead p { margin: 0; max-width: 78ch; color: #cfd8e0; }
+
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; padding: 24px; align-items: start; }
+.rail { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; background: var(--paper);
+  border: var(--edge); box-shadow: var(--drop); padding: 16px; }
+.rail summary { font: 900 18px/1.2 var(--display); cursor: pointer; list-style: none; }
+.rail summary::-webkit-details-marker { display: none; }
+.rail summary::after { content: "+"; float: right; }
+.rail[open] summary::after { content: "\2212"; }
+.group { margin-top: 16px; }
+.group h3 { font: 900 13px/1.2 var(--display); margin: 0 0 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 2px solid var(--ink); background: var(--paper); padding: 2px 8px; cursor: pointer; font-size: 12px; }
+.chip[aria-pressed="true"] { background: var(--pick); box-shadow: 2px 2px 0 var(--ink); }
+.chip[data-bucket][aria-pressed="true"] { background: var(--c); }
+.chip small { opacity: .65; }
+.field { display: block; margin-top: 8px; font-size: 12px; }
+.field input[type=search], .field select { width: 100%; border: 2px solid var(--ink); padding: 6px 8px; background: var(--paper); }
+.field input[type=range] { width: 100%; accent-color: var(--ink); }
+.check { display: flex; gap: 8px; align-items: center; font-size: 12px; margin-top: 4px; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--ink); }
+.reset { margin-top: 16px; width: 100%; border: var(--edge); background: var(--alert); padding: 8px; cursor: pointer;
+  font: 900 13px var(--display); box-shadow: 3px 3px 0 var(--ink); }
+.reset:active { transform: translate(3px, 3px); box-shadow: none; }
+
+.findings { background: var(--promising); border: var(--edge); box-shadow: var(--drop); padding: 16px 18px; margin-bottom: 20px; }
+.findings h2 { font: 900 20px/1.15 var(--display); margin: 0 0 8px; }
+.findings ul { margin: 0; padding-left: 18px; }
+.findings li { margin: 2px 0; }
+.findings .note { margin: 8px 0 0; font-size: 12px; }
+.bar { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.count { font: 900 22px/1 var(--display); }
+.bar .field { margin: 0; min-width: 220px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 22px; align-items: start; }
+.card { background: var(--paper); border: var(--edge); box-shadow: var(--drop); display: flex; flex-direction: column; }
+.card.off { opacity: .6; }
+.stamp { display: flex; align-items: stretch; border-bottom: var(--edge); }
+.stamp .days { background: var(--c); border-right: var(--edge); padding: 8px 12px; min-width: 96px; text-align: center; }
+.stamp .days b { display: block; font: 900 34px/1 var(--display); }
+.stamp .days span { font-size: 11px; }
+.stamp .meta { padding: 8px 10px; font-size: 12px; min-width: 0; }
+.stamp .meta strong { display: block; font: 900 14px/1.2 var(--display); overflow-wrap: anywhere; }
+.reach { border-bottom: var(--edge); padding: 8px 12px; background: var(--paper); }
+.reach .big { font: 900 20px/1.1 var(--display); }
+.reach .pace { font-size: 12px; }
+.reach details { margin-top: 6px; font-size: 12px; }
+.reach summary { cursor: pointer; text-decoration: underline; }
+.reach h4 { font: 900 12px/1.2 var(--display); margin: 10px 0 4px; }
+.row { display: grid; grid-template-columns: 74px 1fr 92px; gap: 6px; align-items: center; margin: 2px 0; }
+.track { display: flex; height: 12px; border: 2px solid var(--ink); background: var(--desk); }
+.track i { display: block; height: 100%; }
+.track .f { background: var(--pick); } .track .m { background: var(--too_new); } .track .c { background: var(--winner); }
+.key { display: inline-block; width: 10px; height: 10px; border: 2px solid var(--ink); vertical-align: -1px; margin: 0 3px 0 8px; }
+.shot { width: 100%; max-height: 340px; object-fit: contain; background: #eef2f6; border-bottom: var(--edge); display: block; }
+.copy { padding: 12px; }
+.copy .hook { font-weight: 700; }
+.copy .body { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.copy .body.clamp { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.more { border: 0; background: none; padding: 0; margin-top: 4px; text-decoration: underline; cursor: pointer; font-size: 12px; }
+.headline { border-top: 2px dashed var(--ink); margin-top: 10px; padding-top: 8px; font-size: 13px; }
+.headline b { display: block; }
+.tags { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 12px 12px; }
+.tag { border: 2px solid var(--ink); padding: 1px 6px; font-size: 11px; background: var(--desk); }
+.tag.yes { background: var(--ink); color: var(--paper); }
+.tag.unsure { border-style: dashed; background: var(--paper); }
+.card a.open { margin-top: auto; border-top: var(--edge); padding: 8px 12px; color: var(--ink); font-weight: 700; font-size: 12px; background: var(--paper); }
+.card a.open:hover { background: var(--pick); }
+.empty { border: var(--edge); background: var(--paper); padding: 28px; box-shadow: var(--drop); max-width: 60ch; }
+.empty h2 { font: 900 22px/1.1 var(--display); margin: 0 0 8px; }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; padding: 16px; }
+  .rail { position: static; max-height: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1 id="title">Dosar reclame</h1>
+  <p id="lede"></p>
+</header>
+<div class="layout">
+  <details class="rail" id="rail" open><summary>Filtre</summary><div id="filters"></div></details>
+  <main>
+    <section class="findings" id="findings"></section>
+    <div class="bar">
+      <div class="count" id="count" aria-live="polite"></div>
+      <label class="field">Ordonează după
+        <select id="sort">
+          <option value="days">Zile de rulare</option>
+          <option value="reach">Reach în UE</option>
+          <option value="per_day">Reach pe zi</option>
+          <option value="variants">Număr de variante</option>
+          <option value="specificity">Specificitate</option>
+          <option value="emotional_intensity">Intensitate emoțională</option>
+          <option value="cta_clarity">Claritatea îndemnului</option>
+          <option value="recent">Cele mai recente</option>
+        </select>
+      </label>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+<script src="data.js"></script>
+<script>
+"use strict";
+const ADS = window.ADS || [], META = window.META || {}, SUMMARY = window.SUMMARY || {dims: {}};
+
+// Romanian labels for everything Jev returns; unknown values fall back to the raw id.
+const DIM = {top_gender: "Cine a văzut-o mai mult", top_age: "Vârsta cea mai atinsă", bucket: "Performanță", fit: "Potrivire cu cercetarea", language: "Limbă", awareness: "Nivel de awareness", hook_type: "Tip de hook",
+  voice: "Cine vorbește", angle: "Unghi de persuasiune", emotion: "Emoție", structure: "Structura textului", format: "Format",
+  has_offer: "Are ofertă", has_urgency: "Urgență sau stoc limitat", has_social_proof_numbers: "Dovadă socială cu cifre",
+  has_guarantee: "Garanție", handles_objection: "Răspunde la o obiecție", has_numeric_promise: "Promisiune cu cifre",
+  specificity: "Specificitate", emotional_intensity: "Intensitate emoțională", cta_clarity: "Claritatea îndemnului"};
+const VAL = {winner: "Winner", promising: "Promițător", too_new: "Prea nou",
+  image: "Imagine", video: "Video", carousel: "Carusel", female: "Femei", male: "Bărbați",
+  direct: "Concurent direct", adjacent: "Aceeași problemă, altă soluție", store_wide: "Reclamă generică de magazin", unrelated: "Fără legătură",
+  ro: "Română", en: "Engleză", hu: "Maghiară", de: "Germană", fr: "Franceză", it: "Italiană", es: "Spaniolă", pl: "Poloneză",
+  bg: "Bulgară", ru: "Rusă", uk: "Ucraineană", tr: "Turcă", nl: "Olandeză", pt: "Portugheză", el: "Greacă", mixed: "Mixt", other: "Altceva",
+  unaware: "Unaware", problem_aware: "Problem-aware", solution_aware: "Solution-aware", product_aware: "Product-aware", most_aware: "Most-aware",
+  question: "Întrebare", bold_claim: "Afirmație îndrăzneață", pain_point: "Durere", personal_story: "Poveste personală",
+  testimonial: "Testimonial", statistic: "Cifră", curiosity_gap: "Curiozitate", offer: "Ofertă", audience_callout: "Strigă publicul",
+  how_to: "Cum să", news: "Noutate", warning: "Avertisment", product_name: "Numele produsului",
+  brand: "Brandul", founder: "Fondatorul", customer: "Clientul", expert: "Expertul", editorial: "Editorial", ugc_creator: "Creator UGC",
+  pain_relief: "Scapi de durere", transformation: "Transformare", social_proof: "Dovadă socială", authority: "Autoritate",
+  unique_mechanism: "Mecanism unic", price_value: "Preț bun", convenience: "Comoditate", vs_alternatives: "Mai bun decât alternativa",
+  identity: "Identitate", urgency: "Urgență",
+  fear: "Frică", frustration: "Frustrare", hope: "Speranță", curiosity: "Curiozitate", belonging: "Apartenență", status: "Statut",
+  guilt: "Vinovăție", humor: "Umor", neutral: "Neutru",
+  pas: "Problemă, agitare, soluție", aida: "AIDA", story_to_offer: "Poveste apoi ofertă", benefit_list: "Listă de beneficii",
+  one_liner: "O singură frază", advertorial: "Advertorial", offer_only: "Doar oferta"};
+const label = v => VAL[v] || v;
+const CHOICES = (META.dims && META.dims.choices) || [];
+const NOULS = (META.dims && META.dims.nouls) || [];
+const SCORES = (META.dims && META.dims.scores) || [];
+const CHIP_DIMS = ["bucket", "fit", "language", "top_gender", "top_age", "format", ...CHOICES.filter(c => c !== "language" && c !== "fit")];
+for (const ad of ADS) if (ad.aud) { ad.top_gender = ad.aud.top_segment.gender; ad.top_age = ad.aud.top_segment.age; }
+const DIRECT = ["bucket", "format", "top_gender", "top_age"];
+const valueOf = (ad, dim) => DIRECT.includes(dim) ? ad[dim] : ad.j && ad.j[dim];
+const num = n => Number(n).toLocaleString("ro-RO");
+let regionNames; try { regionNames = new Intl.DisplayNames(["ro"], {type: "region"}); } catch (e) {}
+const country = code => { try { return regionNames.of(code); } catch (e) { return code; } };
+
+function el(tag, props = {}, ...kids) {  // textContent only: ad copy is untrusted
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else if (v !== null && v !== false) n.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) if (kid) n.append(kid);
+  return n;
+}
+
+const fresh = () => ({sets: {bucket: ["winner", "promising"], fit: ["direct", "adjacent"], language: META.language ? [META.language, "mixed"] : []}, nouls: [], minDays: 0, minReach: 0, scores: {}, q: "", sort: "days"});
+let state = fresh();
+try { if (location.hash.length > 1) state = {...fresh(), ...JSON.parse(decodeURIComponent(location.hash.slice(1)))}; } catch (e) {}
+for (const dim of ["bucket", "fit", "language"])  // never open on an empty page (e.g. a dossier that was not judged yet)
+  if (!ADS.some(a => (state.sets[dim] || []).includes(valueOf(a, dim)))) state.sets[dim] = [];
+
+function passes(ad) {
+  for (const [dim, picked] of Object.entries(state.sets)) if (picked.length && !picked.includes(valueOf(ad, dim))) return false;
+  for (const n of state.nouls) if (!(ad.j && ad.j[n] >= 0.5)) return false;
+  for (const [s, min] of Object.entries(state.scores)) if (min > 0 && !(ad.j && ad.j[s] >= min)) return false;
+  if (ad.days < state.minDays) return false;
+  if (state.minReach && !(ad.aud && ad.aud.eu_total >= state.minReach)) return false;
+  if (state.q) {
+    const hay = [ad.body, ad.title, ad.link_description, ad.page_name].join(" ").toLowerCase();
+    if (!hay.includes(state.q.toLowerCase())) return false;
+  }
+  return true;
+}
+const SORTS = {days: a => a.days, reach: a => a.aud ? a.aud.eu_total : -1, per_day: a => a.aud ? a.aud.per_day : -1, variants: a => a.variants, recent: a => Date.parse(a.start_date),
+  specificity: a => a.j ? a.j.specificity : -1, emotional_intensity: a => a.j ? a.j.emotional_intensity : -1, cta_clarity: a => a.j ? a.j.cta_clarity : -1};
+
+function update() {
+  history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify(state)));
+  render();
+}
+
+function buildFilters() {
+  const root = document.getElementById("filters");
+  root.replaceChildren();
+  root.append(el("label", {class: "field"}, "Caută în text sau după pagină",
+    el("input", {type: "search", value: state.q, oninput: e => { state.q = e.target.value; update(); }})));
+  const maxDays = Math.max(1, ...ADS.map(a => a.days));
+  const daysOut = el("b", {text: state.minDays});
+  root.append(el("label", {class: "field"}, "A rulat cel puțin ", daysOut, " zile",
+    el("input", {type: "range", min: 0, max: maxDays, value: state.minDays,
+      oninput: e => { state.minDays = +e.target.value; daysOut.textContent = state.minDays; update(); }})));
+  if (META.n_reach) root.append(el("label", {class: "field"}, "Reach minim în UE",
+    el("select", {onchange: e => { state.minReach = +e.target.value; update(); }},
+      [0, 10000, 50000, 100000, 500000, 1000000].map(n => el("option", {value: n, selected: state.minReach === n ? "" : null,
+        text: n ? "peste " + num(n) + " de oameni" : "oricât"})))));
+  for (const dim of CHIP_DIMS) {
+    const counts = {};
+    for (const ad of ADS) { const v = valueOf(ad, dim); if (v) counts[v] = (counts[v] || 0) + 1; }
+    const values = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    if (values.length < 2 && dim !== "bucket") continue;
+    const chips = values.map(v => {
+      const on = (state.sets[dim] || []).includes(v);
+      return el("button", {class: "chip", type: "button", "aria-pressed": on, "data-bucket": dim === "bucket" ? v : null,
+        style: dim === "bucket" ? `--c: var(--${v})` : null,
+        onclick: () => { const s = new Set(state.sets[dim] || []); s.has(v) ? s.delete(v) : s.add(v); state.sets[dim] = [...s]; buildFilters(); update(); }},
+        label(v) + " ", el("small", {text: counts[v]}));
+    });
+    root.append(el("div", {class: "group"}, el("h3", {text: DIM[dim] || dim}), el("div", {class: "chips"}, chips)));
+  }
+  if (NOULS.length && ADS.some(a => a.j)) {
+    root.append(el("div", {class: "group"}, el("h3", {text: "Textul conține"}), NOULS.map(n =>
+      el("label", {class: "check"}, el("input", {type: "checkbox", checked: state.nouls.includes(n) ? "" : null,
+        onchange: e => { state.nouls = e.target.checked ? [...state.nouls, n] : state.nouls.filter(x => x !== n); update(); }}), DIM[n] || n))));
+    root.append(el("div", {class: "group"}, el("h3", {text: "Scor minim"}), SCORES.map(s => {
+      const out = el("b", {text: Math.round((state.scores[s] || 0) * 100) + "%"});
+      return el("label", {class: "field"}, (DIM[s] || s) + " ", out, el("input", {type: "range", min: 0, max: 1, step: 0.1, value: state.scores[s] || 0,
+        oninput: e => { state.scores[s] = +e.target.value; out.textContent = Math.round(state.scores[s] * 100) + "%"; update(); }}));
+    })));
+  }
+  root.append(el("button", {class: "reset", type: "button", onclick: () => { state = fresh(); state.sets = {}; document.getElementById("sort").value = "days"; buildFilters(); update(); }}, "Șterge toate filtrele"));
+}
+
+function buildFindings() {
+  const box = document.getElementById("findings");
+  if (!META.n_judged) {
+    box.append(el("h2", {text: "Textele nu au fost încă analizate"}),
+      el("p", {class: "note", text: "Vezi doar cât a rulat fiecare reclamă. Pentru hook, awareness, unghi și restul, pune TYPESAFE_API_KEY în .env și rulează /wizard-ads-review reanalyze pe acest dosar."}));
+    return;
+  }
+  if (!SUMMARY.n_winners) {
+    box.append(el("h2", {text: "Nicio reclamă activă potrivită nu rulează încă de destul timp"}),
+      el("p", {class: "note", text: "Scoate filtrul de performanță ca să vezi reclamele mai noi."}));
+    return;
+  }
+  box.append(el("h2", {text: `Cum arată cele ${SUMMARY.n_winners} reclame active care rulează de cel puțin ${META.winner_days} zile`}));
+  const rows = Object.entries(SUMMARY.dims).filter(([dim, list]) => list.length > 1).map(([dim, list]) => ({dim, ...list[0]}));
+  box.append(el("ul", {}, rows.map(r => el("li", {text:
+    `${DIM[r.dim] || r.dim}: cel mai des ${label(r.value)}, la ${r.winners}% dintre ele`}))));
+  const au = SUMMARY.audience;
+  if (au) {
+    const topAge = [...au.ages].sort((a, b) => (b.female + b.male) - (a.female + a.male))[0];
+    box.append(el("p", {class: "note", text: `Cine vede reclamele din nișă: cele ${au.n_ads} reclame cu reach cunoscut au ajuns la ${num(au.eu_total)} de oameni în UE, ` +
+      `${au.gender.female}% femei și ${au.gender.male}% bărbați, cel mai mult la ${topAge.age} ani. Pe țări: ` +
+      au.countries.filter(c => c.pct > 0).slice(0, 4).map(c => `${country(c.code)} ${c.pct}%`).join(", ") + "."}));
+  }
+  box.append(el("p", {class: "note", text: "Sunt tipare, nu dovezi: vedem doar reclame active, deci nu știm ce s-a încercat și a fost oprit." +
+    (SUMMARY.n_winners < 10 ? " Eșantionul e mic." : "")}));
+}
+
+function reachBlock(ad) {
+  const a = ad.aud;
+  if (!a) return null;
+  const widest = Math.max(1, ...a.ages.map(r => r.female + r.male));
+  const t = a.targeting || {};
+  const targeting = [t.locations && t.locations.length ? t.locations.join(", ") : null,
+    t.age_min ? `${t.age_min}-${t.age_max >= 65 ? "65+" : t.age_max} ani` : null,
+    t.gender ? (t.gender === "All" ? "toate genurile" : t.gender === "Women" ? "doar femei" : t.gender === "Men" ? "doar bărbați" : t.gender) : null].filter(Boolean);
+  return el("div", {class: "reach"},
+    el("div", {class: "big", text: num(a.eu_total) + " de oameni în UE"}),
+    el("div", {class: "pace", text: `${num(a.per_day)} pe zi, ${a.home_pct}% în ${country(META.country)}, cel mai mult ${label(a.top_segment.gender).toLowerCase()} ${a.top_segment.age} (${a.top_segment.pct}%)`}),
+    el("details", {}, el("summary", {text: "Cine a văzut reclama"}),
+      el("h4", {text: "Pe țări"}),
+      a.countries.filter(c => c.pct > 0).slice(0, 6).map(c => el("div", {class: "row"}, el("span", {text: country(c.code)}),
+        el("div", {class: "track"}, el("i", {class: "c", style: `width:${c.pct}%`})), el("span", {text: `${c.pct}% (${num(c.n)})`}))),
+      el("h4", {}, "Pe vârstă și gen", el("span", {class: "key", style: "background:var(--pick)"}), "femei", el("span", {class: "key", style: "background:var(--too_new)"}), "bărbați"),
+      a.ages.map(r => el("div", {class: "row"}, el("span", {text: r.age}),
+        el("div", {class: "track"}, el("i", {class: "f", style: `width:${100 * r.female / widest}%`}), el("i", {class: "m", style: `width:${100 * r.male / widest}%`})),
+        el("span", {text: `${r.female}% / ${r.male}%`}))),
+      targeting.length ? el("h4", {text: "Targetare declarată"}) : null, targeting.length ? el("div", {text: targeting.join("; ")}) : null,
+      a.payer ? el("h4", {text: "Cine plătește"}) : null, a.payer ? el("div", {text: a.payer + (a.beneficiary && a.beneficiary !== a.payer ? ", pentru " + a.beneficiary : "")}) : null));
+}
+
+function card(ad) {
+  const period = `activă din ${ad.start_date}`;
+  const body = el("p", {class: "body clamp", text: ad.body || "(fără text)"});
+  const more = el("button", {class: "more", type: "button", "aria-expanded": "false", text: "Arată tot textul", onclick: () => {
+    const open = body.classList.toggle("clamp") === false;
+    more.textContent = open ? "Strânge textul" : "Arată tot textul"; more.setAttribute("aria-expanded", open);
+  }});
+  const tags = [];
+  if (ad.j) {
+    for (const c of CHOICES) if (c !== "language" && c !== "fit") tags.push(el("span", {
+      class: "tag" + ((ad.unsure || []).includes(c) ? " unsure" : ""),
+      title: (DIM[c] || c) + ((ad.unsure || []).includes(c) ? " (Jev nu e sigur)" : ""), text: label(ad.j[c])}));
+    for (const n of NOULS) if (ad.j[n] >= 0.5) tags.push(el("span", {class: "tag yes", text: DIM[n] || n}));
+  }
+  return el("article", {class: "card" + (ad.in_niche === false ? " off" : ""), style: `--c: var(--${ad.bucket})`},
+    el("div", {class: "stamp"},
+      el("div", {class: "days"}, el("b", {text: ad.days}), el("span", {text: ad.days === 1 ? "zi" : "zile"})),
+      el("div", {class: "meta"}, el("strong", {text: ad.page_name}), el("div", {text: label(ad.bucket) + ", " + period}),
+        el("div", {text: label(ad.format) + (ad.variants > 1 ? `, ${ad.variants} variante` : "")}),
+        ad.j ? el("div", {text: label(ad.j.fit) + ((ad.unsure || []).includes("fit") ? " (nesigur)" : "")}) : null)),
+    reachBlock(ad),
+    ad.image ? el("img", {class: "shot", src: ad.image, loading: "lazy", alt: "Imaginea reclamei de la " + ad.page_name}) : null,
+    el("div", {class: "copy"}, body, (ad.body || "").length > 260 ? more : null,
+      ad.title || ad.cta ? el("div", {class: "headline"}, ad.title ? el("b", {text: ad.title}) : null, ad.cta ? el("span", {text: "Buton: " + ad.cta}) : null) : null),
+    tags.length ? el("div", {class: "tags"}, tags) : null,
+    el("a", {class: "open", href: ad.library_url, target: "_blank", rel: "noopener noreferrer", text: "Deschide în Ad Library"}));
+}
+
+function render() {
+  const key = SORTS[state.sort] || SORTS.days;
+  const shown = ADS.filter(passes).sort((a, b) => key(b) - key(a));
+  document.getElementById("count").textContent = `${shown.length} din ${ADS.length} reclame`;
+  const grid = document.getElementById("grid");
+  grid.replaceChildren(...(shown.length ? shown.map(card) : [el("div", {class: "empty"},
+    el("h2", {text: "Nicio reclamă nu trece de filtrele alese"}),
+    el("p", {text: "Scoate câteva filtre din stânga sau apasă „Șterge toate filtrele”."}))]));
+}
+
+document.getElementById("title").textContent = META.niche ? "Dosar: " + META.niche : "Dosar reclame";
+document.title = document.getElementById("title").textContent;
+document.getElementById("lede").textContent = ADS.length
+  ? `${META.n_collected} reclame active din Meta Ad Library (${META.country}${META.language ? ", limba " + label(META.language).toLowerCase() : ""}), adunate pe ${(META.collected_at || "").slice(0, 10)} și grupate în ${META.n_creatives} texte distincte. ` +
+    `Winner înseamnă cel puțin ${META.winner_days} zile de rulare, promițător cel puțin ${META.promising_days}.` +
+    (META.research && META.research.product ? ` Potrivirea e judecată față de: ${META.research.product}.` : "")
+  : "Lipsește data.js lângă acest fișier. Rulează /wizard-ads-review ca să generezi dosarul.";
+if (window.matchMedia("(max-width: 860px)").matches) document.getElementById("rail").open = false;
+const sortBox = document.getElementById("sort");
+sortBox.value = state.sort;
+sortBox.addEventListener("change", e => { state.sort = e.target.value; update(); });
+buildFilters(); buildFindings(); render();
+</script>
+</body>
+</html>
