@@ -2,9 +2,10 @@
 
 Repo-ul e un marketplace Claude Code (`.claude-plugin/marketplace.json`) cu un singur plugin, `plugins/wizard-analiza-competitori`, publicat ca `silviu-life/wizard-analiza-competitori`. Pentru test local: `claude --plugin-dir plugins/wizard-analiza-competitori`. Orice schimbare publicată cere `version` crescut în `plugins/wizard-analiza-competitori/.claude-plugin/plugin.json`.
 
-Pluginul conține trei skill-uri:
+Pluginul conține patru skill-uri:
 - `wizard-ads-review` adună reclamele active ale unei nișe din Meta Ad Library, le judecă textul cu Jev (TypeSafe) față de cercetarea userului, adaugă reach-ul din UE și produce un dosar local cu o pagină HTML cu filtre.
 - `wizard-landing-review` pornește de la un astfel de dosar: vizitează paginile de landing ale reclamelor potrivite, salvează fiecare pagină ca JSON structurat, o judecă cu Jev și adaugă `landings.html` în dosar.
+- `wizard-analiza-reclame` le cheamă pe rând pe primele două, pe același dosar, și dă un raport comun reclamă → pagină. Doar `SKILL.md`, fără cod.
 - `wizard-competitori-install` instalează pas cu pas, cu acordul userului, ce le trebuie celorlalte două (uv, Python, Chromium, `.env`).
 
 Fără `TYPESAFE_API_KEY`, ambele `analyze.py` pun aceleași întrebări lui Claude Code (`claude -p --json-schema`, în loturi) și scriu răspunsurile în aceeași formă ca Jev (`claude_judge`, `answer_schema`, `store` din `wizard-ads-review/scripts/analyze.py`).

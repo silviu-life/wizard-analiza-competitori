@@ -25,6 +25,14 @@ Actualizare: `/plugin marketplace update wizard-analiza-competitori`.
 
 ## Folosire
 
+Totul dintr-o dată, reclame și pagini de landing, cu un raport care le leagă:
+
+```
+/wizard-analiza-reclame suplimente pentru somn
+```
+
+Sau pe bucăți:
+
 În Claude Code:
 
 ```
